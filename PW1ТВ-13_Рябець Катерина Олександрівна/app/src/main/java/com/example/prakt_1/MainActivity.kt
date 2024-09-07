@@ -26,6 +26,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// Перевірка коректності вводу та перетворення рядка в дійсне число
 fun checkAndToDouble(input: String): Double? {
     return try {
         val value = input.toDouble()
@@ -90,12 +91,15 @@ fun Task1(modifier: Modifier = Modifier) {
     // Змінна для прокрутки вмісту
     val scrollState = rememberScrollState()
 
+    //Розрахунки відповідно до завдання
     fun calculate(
         hp: Double, cp: Double, sp: Double, np: Double, op: Double, wp: Double, ap: Double
     ): String {
-        val kpc = 100 / (100 - wp)
-        val krg = 100 / (100 - wp - ap)
+        
+        val kpc = 100 / (100 - wp) // Коєфіцієнт для розрахунку складу сухої маси
+        val krg = 100 / (100 - wp - ap) // Коєфіцієнт для розрахунку складу горючої маси
 
+        //Розрахунок складу сухої маси
         val hc = hp * kpc
         val cc = cp * kpc
         val sc = sp * kpc
@@ -103,7 +107,8 @@ fun Task1(modifier: Modifier = Modifier) {
         val oc = op * kpc
         val ac = ap * kpc
         val totalCheck = hc + cc + sc + nc + oc + ac
-
+        
+        //Розрахунок складу горючої маси
         val hg = hp * krg
         val cg = cp * krg
         val sg = sp * krg
@@ -111,9 +116,10 @@ fun Task1(modifier: Modifier = Modifier) {
         val og = op * krg
         val totalCheck2 = hg + cg + sg + ng + og
 
-        val qph = (339 * cp + 1030 * hp - 108.8 * (op - sp) - 25 * wp)/1000
-        val qch = (qph + 0.025 * wp) * 100.0 / (100 - wp)
-        val qgh = (qph + 0.025 * wp) * 100.0 / (100 - wp - ap)
+        
+        val qph = (339 * cp + 1030 * hp - 108.8 * (op - sp) - 25 * wp)/1000 // Нижча теплота згорання для робочої маси
+        val qch = (qph + 0.025 * wp) * 100.0 / (100 - wp) // Нижча теплота згорання для сухої маси
+        val qgh = (qph + 0.025 * wp) * 100.0 / (100 - wp - ap) // Нижча теплота згорання для горючої маси
 
         return if (totalCheck == 100.0 && totalCheck2 == 100.0) {
             """
@@ -150,7 +156,7 @@ fun Task1(modifier: Modifier = Modifier) {
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-
+        // текстові поля для введення відсотків
         TextField(value = hp, onValueChange = { hp = it }, label = { Text("Hp") })
         TextField(value = cp, onValueChange = { cp = it }, label = { Text("Cp") })
         TextField(value = sp, onValueChange = { sp = it }, label = { Text("Sp") })
@@ -161,7 +167,7 @@ fun Task1(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = {
+        Button(onClick = { // Перевірка значень, ящо все вірно запуск розрахунків і виведення результату
             val hpValue = checkAndToDouble(hp)
             val cpValue = checkAndToDouble(cp)
             val spValue = checkAndToDouble(sp)
@@ -197,6 +203,7 @@ fun Task1(modifier: Modifier = Modifier) {
 // Другий калькулятор
 @Composable
 fun Task2(modifier: Modifier = Modifier) {
+      // Змінні для користувацького вводу
     var cg by remember { mutableStateOf("") }
     var hg by remember { mutableStateOf("") }
     var og by remember { mutableStateOf("") }
@@ -205,12 +212,17 @@ fun Task2(modifier: Modifier = Modifier) {
     var vg by remember { mutableStateOf("") }
     var wg by remember { mutableStateOf("") }
     var ag by remember { mutableStateOf("") }
+    // Змінна для результату
     var result by remember { mutableStateOf("") }
+     // Змінна для повідомлення про помилку
     var errorMessage by remember { mutableStateOf("") }
+    // Змінна для прокрутки вмісту
     val scrollState = rememberScrollState()
 
+    //Розрахунки відповідно до завдання
     fun calculate2(cg: Double, hg: Double, og: Double, sg: Double, qi: Double, vg: Double,
                         wg: Double, ag: Double): String {
+        //перерахуное елементарного складумазуту на робочу масу
         val cp = cg * (100 - wg - ag) / 100.0
         val hp = hg * (100 - wg - ag) / 100.0
         val op = og * (100 - wg - ag) / 100.0
@@ -218,7 +230,7 @@ fun Task2(modifier: Modifier = Modifier) {
         val ap = ag * (100 - wg) / 100.0
         val vp = vg * (100 - wg) / 100.0
 
-
+        //перерахунок  нижчої теплоти згоряння мазуту на робочу масу
         val qri = qi * (100 - wg - ap )/ 100 - 0.025 * wg
 
         return """
@@ -253,7 +265,7 @@ fun Task2(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = {
+        Button(onClick = {// Перевірка значень, ящо все вірно запуск розрахунків і виведення результату
             val cgValue = checkAndToDouble(cg)
             val hgValue = checkAndToDouble(hg)
             val ogValue = checkAndToDouble(og)
